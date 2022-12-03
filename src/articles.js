@@ -10,7 +10,7 @@ function getArticles(req, res) {
         const userObj = items[0];
         const userToQuery = [req.username, ...userObj.followers]
         Article.find({ author: { $in: userToQuery } }).sort('-date').limit(10).exec(function (err, item2) {
-            res.status(200).send({ posts: item2 })
+            return res.status(200).send({ posts: item2 })
         })
     })
 }
@@ -23,13 +23,13 @@ const getArticle = (req, res) => {
         Article.find({ author: author }).exec(function (err, items) {
             if (items.length > 0) {
                 resArticles.push({ articles: items });
-                res.status(200).send(resArticles);
+                return res.status(200).send(resArticles);
             }
             else {
                 Article.find({ _id: author }).exec(function (err, items2) {
                     resArticles.push({ articles: items });
                 });
-                res.status(200).send(resArticles);
+                return res.status(200).send(resArticles);
             }
         })
     }
@@ -39,7 +39,7 @@ const getArticle = (req, res) => {
             items.forEach(item => {
                 resArticles.push(item);
             })
-            res.status(200).send(resArticles);
+            return res.status(200).send(resArticles);
         })
     }
 
@@ -61,7 +61,12 @@ const addArticle = (req, res) => {
         comments: []
     }).save(function (err, items) {
         Article.find({ author: username }).exec(function (err, items) {
-            res.status(200).send({ articles: items });
+            if (items.length >= 1) {
+                return res.status(200).send({ articles: items });
+            }
+            else {
+                return res.status(200).send({ articles: [] });
+            }
         })
     })
 }
