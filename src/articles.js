@@ -9,7 +9,8 @@ function getArticles(req, res) {
     Profile.find({ username: req.username }).exec(function (err, items) {
         const userObj = items[0];
         const userToQuery = [req.username, ...userObj.followers]
-        Article.find({ author: { $in: userToQuery } }).sort('-date').limit(10).exec(function (err, item2) {
+        console.log(userToQuery);
+        Article.find({ author: { $in: userToQuery } }).sort('-date').limit(1000).exec(function (err, item2) {
             return res.status(200).send({ posts: item2 })
         })
     })
